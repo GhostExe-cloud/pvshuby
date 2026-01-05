@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProVoid Lightning | Elite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;800&display=swap');
+
+        :root {
+            --bg: #050505;
+            --acrylic: rgba(12, 12, 12, 0.75);
+            --border: rgba(255, 255, 255, 0.1);
+            --accent: #ffffff;
+            --dim: #555;
+            --btn-idle: rgba(255, 255, 255, 0.04);
+            --radius-lg: 18px;
+            --radius-sm: 8px;
+            --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* --- NEON SLIM SCROLLBAR --- */
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(transparent, #fff, transparent); border-radius: 10px; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
+        
+        body {
+            background: var(--bg);
+            color: #fff;
+            font-family: 'JetBrains Mono', monospace;
+            height: 100vh; overflow: hidden; padding: 25px;
+        }
+
+        #stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; pointer-events: none; }
+
+        /* --- HEADER --- */
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 25px; background: var(--acrylic);
+            backdrop-filter: blur(25px); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); margin-bottom: 20px;
+        }
+        .logo { font-weight: 800; font-size: 11px; letter-spacing: 4px; display: flex; align-items: center; gap: 15px; }
+        .dot { width: 7px; height: 7px; background: #fff; border-radius: 50%; box-shadow: 0 0 15px #fff; animation: pulse 2s infinite; }
+
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: 0.3; } }
+
+        /* --- TOOLBAR --- */
+        .toolbar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .search-container {
+            flex: 1; background: var(--acrylic); border: 1px solid var(--border);
+            border-radius: 6px; padding: 0 15px; display: flex; align-items: center; gap: 10px;
+            backdrop-filter: blur(10px); height: 36px;
+        }
+        .search-container input {
+            background: transparent; border: none; color: #fff; font-family: inherit;
+            font-size: 10px; outline: none; width: 100%; cursor: text;
+        }
+        .tool-btn {
+            background: var(--btn-idle); border: 1px solid var(--border); color: var(--dim);
+            font-size: 9px; padding: 0 15px; border-radius: 6px; font-weight: 800;
+            cursor: pointer; transition: 0.2s;
+        }
+        .tool-btn:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.08); }
+
+        /* --- GRID --- */
+        .scroll-container { height: calc(100vh - 150px); overflow-y: auto; padding-right: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; }
+
+        .card {
+            background: var(--acrylic); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); overflow: hidden; transition: var(--transition);
+            cursor: pointer; position: relative; backdrop-filter: blur(10px);
+        }
+        .card:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-3px); }
+        .card-img { width: 100%; height: 115px; object-fit: cover; opacity: 0.35; filter: grayscale(1); transition: 0.5s; }
+        .card:hover .card-img { opacity: 0.8; filter: grayscale(0); }
+        
+        .badge {
+            position: absolute; top: 10px; right: 10px; font-size: 7px; font-weight: 800;
+            padding: 3px 7px; border-radius: 3px; text-transform: uppercase;
+            background: rgba(0,0,0,0.6); border: 1px solid var(--border);
+        }
+        .badge-premium { color: #fff; border-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
+
+        .card-content { padding: 12px; }
+        .card-title { font-size: 11px; font-weight: 500; margin-bottom: 4px; color: #fff; }
+        .card-meta { font-size: 8px; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- CENTERED ACRYLIC MODAL --- */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 2000;
+            opacity: 0; transition: 0.3s ease;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+
+        .modal-content {
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            width: 360px; padding: 40px; border-radius: 20px;
+            text-align: center; transform: scale(0.9); transition: 0.4s var(--transition);
+        }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        .modal-dot {
+            width: 45px; height: 45px; background: #fff; border-radius: 50%;
+            margin: 0 auto 30px; box-shadow: 0 0 40px rgba(255,255,255,0.5);
+            animation: pulse 1.5s infinite;
+        }
+
+        /* --- LESS WHITE BUTTONS --- */
+        .action-btn {
+            width: 100%; padding: 13px; margin-bottom: 10px;
+            background: var(--btn-idle); border: 1px solid var(--border);
+            color: rgba(255,255,255,0.7); font-family: inherit; font-size: 9px; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 2px; cursor: pointer; border-radius: 6px;
+            transition: 0.3s;
+        }
+        .action-btn:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.5); }
+        .action-btn.primary { 
+            background: rgba(255,255,255,0.9); color: #000; border: none; 
+        }
+        .action-btn.primary:hover { background: #fff; transform: scale(1.02); }
+
+        /* --- MONACO TOASTS --- */
+        .toast-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column-reverse; gap: 8px; z-index: 3000; }
+        .toast {
+            padding: 10px 18px; background: #080808; border: 1px solid var(--border);
+            border-left: 2px solid #fff; font-size: 10px; color: #fff;
+            transform: translateX(130%); transition: 0.4s;
+        }
+        .toast.show { transform: translateX(0); }
+    </style>
+</head>
+<body>
+
+    <canvas id="stars"></canvas>
+    <div class="toast-container" id="toastBox"></div>
+
+    <div class="header">
+        <div class="logo"><div class="dot"></div> PROVOID LIGHTNING</div>
+        <div style="font-size: 8px; color: var(--dim); letter-spacing: 1px;">ELITE BUILD</div>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-container">
+            <i class="fas fa-search" style="font-size: 9px; color: var(--dim);"></i>
+            <input type="text" id="sIn" placeholder="IDENTIFY SCRIPT..." onkeyup="if(event.key==='Enter') search()">
+        </div>
+        <button class="tool-btn" onclick="search()">LATEST</button>
+        <button class="tool-btn" onclick="renderVault()">VAULT</button>
+    </div>
+
+    <div class="scroll-container">
+        <div class="grid" id="mainGrid"></div>
+    </div>
+
+    <div class="modal-overlay" id="mOver" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-dot"></div>
+            <div id="mGame" style="font-size: 8px; color: var(--dim); letter-spacing: 2px; margin-bottom: 8px;">DETECTION: NULL</div>
+            <div id="mTitle" style="font-size: 14px; font-weight: 800; margin-bottom: 35px; color: #fff;">LOADING...</div>
+            
+            <button class="action-btn primary" onclick="execute()">EXECUTE MODULE</button>
+            <button class="action-btn" onclick="save()">SAVE TO VAULT</button>
+            <button class="action-btn" onclick="copy()">COPY SOURCE</button>
+            
+            <button class="action-btn" onclick="closeModal()" style="border:none; opacity: 0.3; margin-top: 15px; font-size: 7px; background: transparent;">DISMISS</button>
+        </div>
+    </div>
+
+    <script>
+        let currentScripts = [];
+        let activeScript = null;
+        let saved = JSON.parse(localStorage.getItem('pv_vault') || '[]');
+
+        function notify(msg) {
+            const b = document.getElementById('toastBox');
+            const t = document.createElement('div');
+            t.className = 'toast'; t.innerText = msg.toUpperCase();
+            b.appendChild(t);
+            setTimeout(() => t.classList.add('show'), 10);
+            setTimeout(() => { t.classList.remove('show'); setTimeout(()=>t.remove(), 500); }, 3000);
+        }
+
+        // --- SPACE BACKGROUND ---
+        const cvs = document.getElementById('stars');
+        const ctx = cvs.getContext('2d');
+        let stars = [];
+        function init() {
+            cvs.width = window.innerWidth; cvs.height = window.innerHeight;
+            stars = []; for(let i=0; i<100; i++) stars.push({x:Math.random()*cvs.width, y:Math.random()*cvs.height, r:Math.random()*1, s:Math.random()*0.3});
+        }
+        function draw() {
+            ctx.clearRect(0,0,cvs.width, cvs.height);
+            ctx.fillStyle = "#fff";
+            stars.forEach(s => {
+                ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill();
+                s.y += s.s; if(s.y > cvs.height) s.y = 0;
+            });
+            requestAnimationFrame(draw);
+        }
+        init(); draw();
+
+        // --- API LOGIC ---
+        async function search() {
+            const query = document.getElementById('sIn').value;
+            notify(query ? `Searching Cloud...` : "Updating Database");
+            let url = query ? `https://scriptblox.com/api/script/search?q=${encodeURIComponent(query)}` : `https://scriptblox.com/api/script/fetch?page=1`;
+            try {
+                const res = await fetch(`https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(url)}`);
+                const data = await res.json();
+                currentScripts = data.result.scripts || data.result;
+                render(currentScripts);
+            } catch(e) { notify("API Link Failed"); }
+        }
+
+        function render(data) {
+            const g = document.getElementById('mainGrid');
+            g.innerHTML = data.map(s => `
+                <div class="card" onclick="openModal('${s._id}')">
+                    <div class="badge ${s.isUniversal ? 'badge-premium' : ''}">${s.isUniversal ? 'Premium' : 'Free'}</div>
+                    <img class="card-img" src="${s.image.startsWith('http') ? s.image : 'https://scriptblox.com'+s.image}">
+                    <div class="card-content">
+                        <div class="card-title">${s.title.substring(0,22)}</div>
+                        <div class="card-meta">${s.game.name.substring(0,25)}</div>
+                    </div>
+                </div>`).join('');
+        }
+
+        async function openModal(id) {
+            activeScript = currentScripts.find(x => x._id === id) || saved.find(x => x._id === id);
+            document.getElementById('mTitle').innerText = activeScript.title.toUpperCase();
+            document.getElementById('mGame').innerText = `DETECTION: ${activeScript.game.name.toUpperCase()}`;
+            const ov = document.getElementById('mOver');
+            ov.style.display = 'flex';
+            setTimeout(() => ov.classList.add('active'), 10);
+
+            const res = await fetch(`https://api.codetabs.com/v1/proxy/?quest=https://scriptblox.com/api/script/${id}`);
+            const d = await res.json();
+            activeScript.raw = d.script.script;
+        }
+
+        function closeModal() {
+            const ov = document.getElementById('mOver');
+            ov.classList.remove('active');
+            setTimeout(() => ov.style.display = 'none', 300);
+        }
+
+        function execute() {
+            if(window.chrome?.webview) {
+                window.chrome.webview.postMessage({action:"EXECUTE", content: activeScript.raw});
+                notify("Module Dispatched");
+            } else {
+                navigator.clipboard.writeText(activeScript.raw);
+                notify("Copied Source");
+            }
+            closeModal();
+        }
+
+        function save() {
+            if(!saved.find(x => x._id === activeScript._id)) {
+                saved.push(activeScript);
+                localStorage.setItem('pv_vault', JSON.stringify(saved));
+                notify("Stored in Vault");
+            }
+            closeModal();
+        }
+
+        function renderVault() {
+            render(saved);
+            notify("Accessing Vault");
+        }
+
+        search();
+    </script>
+</body>
+</html>
