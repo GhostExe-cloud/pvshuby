@@ -252,15 +252,24 @@
         }
 
         function execute() {
-            if(window.chrome?.webview) {
-                window.chrome.webview.postMessage({action:"EXECUTE", content: activeScript.raw});
-                notify("Module Dispatched");
-            } else {
-                navigator.clipboard.writeText(activeScript.raw);
-                notify("Copied Source");
-            }
-            closeModal();
+    if (activeScript && activeScript.raw) {
+        if (window.chrome && window.chrome.webview) {
+            // Sending a clean JSON object to C#
+            window.chrome.webview.postMessage({
+                action: "EXECUTE",
+                content: activeScript.raw
+            });
+            notify("Module Dispatched");
+        } else {
+            // Fallback for browser testing
+            navigator.clipboard.writeText(activeScript.raw);
+            notify("Copied to Clipboard (Not in App)");
         }
+        closeModal();
+    } else {
+        notify("Script not loaded yet");
+    }
+}
 
         function save() {
             if(!saved.find(x => x._id === activeScript._id)) {
