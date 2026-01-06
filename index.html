@@ -252,24 +252,46 @@
         }
 
         function execute() {
-    if (activeScript && activeScript.raw) {
-        if (window.chrome && window.chrome.webview) {
-            // Sending a clean JSON object to C#
-            window.chrome.webview.postMessage({
-                action: "EXECUTE",
-                content: activeScript.raw
-            });
-            notify("Module Dispatched");
-        } else {
-            // Fallback for browser testing
-            navigator.clipboard.writeText(activeScript.raw);
-            notify("Executed (Not in App)");
+            if (activeScript && activeScript.raw) {
+                // Check if we are running inside the WPF WebView2 control
+                if (window.chrome && window.chrome.webview) {
+                    // Send message to C# MainWindow.xaml.cs
+                    window.chrome.webview.postMessage({
+                        action: "EXECUTE",
+                        content: activeScript.raw
+                    });
+                    notify("Module Dispatched");
+                } else {
+                    // Fallback for web browser testing: just copy to clipboard
+                    copy();
+                    notify("Executed (Clipboard Fallback)");
+                }
+                closeModal();
+            } else {
+                notify("Fetching script source...");
+            }
         }
-        closeModal();
-    } else {
-        notify("Script not loaded yet");
-    }
-}
+
+        async function copy() {
+            if (activeScript && activeScript.raw) {
+                try {
+                    await navigator.clipboard.writeText(activeScript.raw);
+                    notify("Source Copied to Clipboard");
+                } catch (err) {
+                    // Fallback for older environments
+                    const el = document.createElement('textarea');
+                    el.value = activeScript.raw;
+                    document.body.appendChild(el);
+                    el.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(el);
+                    notify("Source Copied (Fallback)");
+                }
+                closeModal();
+            } else {
+                notify("Script not ready");
+            }
+        }
 
         function save() {
             if(!saved.find(x => x._id === activeScript._id)) {
