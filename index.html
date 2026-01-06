@@ -272,26 +272,21 @@
             }
         }
 
-        async function copy() {
-            if (activeScript && activeScript.raw) {
-                try {
-                    await navigator.clipboard.writeText(activeScript.raw);
-                    notify("Source Copied to Clipboard");
-                } catch (err) {
-                    // Fallback for older environments
-                    const el = document.createElement('textarea');
-                    el.value = activeScript.raw;
-                    document.body.appendChild(el);
-                    el.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(el);
-                    notify("Source Copied (Fallback)");
-                }
-                closeModal();
-            } else {
-                notify("Script not ready");
-            }
+        function copy() {
+    if (activeScript && activeScript.raw) {
+        if (window.chrome && window.chrome.webview) {
+            window.chrome.webview.postMessage({
+                action: "COPY", // Matches the C# 'else if' check
+                content: activeScript.raw
+            });
+            notify("Source Sent to Clipboard");
+        } else {
+            navigator.clipboard.writeText(activeScript.raw);
+            notify("Copied (Web Mode)");
         }
+        closeModal();
+    }
+}
 
         function save() {
             if(!saved.find(x => x._id === activeScript._id)) {
