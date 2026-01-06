@@ -252,39 +252,41 @@
         }
 
         function execute() {
-            if (activeScript && activeScript.raw) {
-                // Check if we are running inside the WPF WebView2 control
-                if (window.chrome && window.chrome.webview) {
-                    // Send message to C# MainWindow.xaml.cs
-                    window.chrome.webview.postMessage({
-                        action: "EXECUTE",
-                        content: activeScript.raw
-                    });
-                    notify("Module Dispatched");
-                } else {
-                    // Fallback for web browser testing: just copy to clipboard
-                    copy();
-                    notify("Executed (Clipboard Fallback)");
-                }
-                closeModal();
-            } else {
-                notify("Fetching script source...");
-            }
-        }
-
-        function copy() {
     if (activeScript && activeScript.raw) {
         if (window.chrome && window.chrome.webview) {
+            // Sends the 'EXECUTE' action to C#
             window.chrome.webview.postMessage({
-                action: "COPY", // Matches the C# 'else if' check
+                action: "EXECUTE",
+                content: activeScript.raw
+            });
+            notify("Module Dispatched");
+        } else {
+            copy(); // Fallback for browser testing
+            notify("Executed (Clipboard Fallback)");
+        }
+        closeModal();
+    } else {
+        notify("Script not loaded yet");
+    }
+}
+
+function copy() {
+    if (activeScript && activeScript.raw) {
+        if (window.chrome && window.chrome.webview) {
+            // Sends the 'COPY' action to C#
+            window.chrome.webview.postMessage({
+                action: "COPY", 
                 content: activeScript.raw
             });
             notify("Source Sent to Clipboard");
         } else {
+            // Web browser fallback
             navigator.clipboard.writeText(activeScript.raw);
-            notify("Copied (Web Mode)");
+            notify("Source Copied (Web)");
         }
         closeModal();
+    } else {
+        notify("Script source missing");
     }
 }
 
