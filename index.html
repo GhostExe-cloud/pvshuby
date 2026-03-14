@@ -208,16 +208,24 @@
 
         // --- API LOGIC ---
         async function search() {
-            const query = document.getElementById('sIn').value;
-            notify(query ? `Searching Cloud...` : "Updating Database");
-            let url = query ? `https://scriptblox.com/api/script/search?q=${encodeURIComponent(query)}` : `https://scriptblox.com/api/script/fetch?page=1`;
-            try {
-                const res = await fetch(`https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(url)}`);
-                const data = await res.json();
-                currentScripts = data.result.scripts || data.result;
-                render(currentScripts);
-            } catch(e) { notify("API Link Failed"); }
-        }
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+
+    try {
+        const query = document.getElementById('sIn').value;
+        let url = query ? `...` : `...`;
+        
+        const res = await fetch(`PROXY_URL_HERE`, { signal: controller.signal });
+        clearTimeout(id);
+        
+        if (!res.ok) throw new Error(`Status: ${res.status}`);
+        
+        const data = await res.json();
+        // ... rest of your logic
+    } catch(e) {
+        notify(e.name === 'AbortError' ? "Request Timed Out" : "API Link Failed");
+    }
+}
 
         function render(data) {
             const g = document.getElementById('mainGrid');
