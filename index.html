@@ -10,130 +10,334 @@
 
         :root {
             --bg: #050505;
-            --acrylic: rgba(12, 12, 12, 0.75);
-            --border: rgba(255, 255, 255, 0.1);
-            --accent: #ffffff;
-            --dim: #555;
-            --btn-idle: rgba(255, 255, 255, 0.04);
+            --surface: rgba(18, 18, 18, 0.68);
+            --acrylic: rgba(12, 12, 12, 0.78);
+            --border: rgba(255, 255, 255, 0.085);
+            --accent: #4caf50;
+            --accent-glow: rgba(76, 175, 80, 0.28);
+            --text: #f0f0f0;
+            --text-dim: #aaaaaa;
             --radius-lg: 18px;
-            --radius-sm: 8px;
-            --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --radius-sm: 10px;
+            --transition: 0.48s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* --- NEON SLIM SCROLLBAR --- */
         ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(transparent, #fff, transparent); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(transparent, var(--accent), transparent); border-radius: 10px; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
-        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            cursor: default;
+            transition: background-color var(--transition),
+                        border-color var(--transition),
+                        color var(--transition),
+                        box-shadow var(--transition),
+                        opacity 0.65s ease,
+                        transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
         body {
             background: var(--bg);
-            color: #fff;
+            color: var(--text);
             font-family: 'JetBrains Mono', monospace;
-            height: 100vh; overflow: hidden; padding: 25px;
+            height: 100vh;
+            overflow: hidden;
+            padding: 25px;
         }
 
-        #stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.4; pointer-events: none; }
+        #stars {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.38;
+            pointer-events: none;
+        }
 
-        /* --- HEADER --- */
         .header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 25px; background: var(--acrylic);
-            backdrop-filter: blur(25px); border: 1px solid var(--border);
-            border-radius: var(--radius-sm); margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 25px;
+            background: var(--acrylic);
+            backdrop-filter: blur(24px) saturate(160%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            margin-bottom: 20px;
         }
-        .logo { font-weight: 800; font-size: 11px; letter-spacing: 4px; display: flex; align-items: center; gap: 15px; }
-        .dot { width: 7px; height: 7px; background: #fff; border-radius: 50%; box-shadow: 0 0 15px #fff; animation: pulse 2s infinite; }
 
-        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.6); opacity: 0.3; } }
+        .logo {
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: 4px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-        /* --- TOOLBAR --- */
-        .toolbar { display: flex; gap: 10px; margin-bottom: 20px; }
+        .dot {
+            width: 7px;
+            height: 7px;
+            background: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 16px var(--accent-glow);
+            animation: pulse 2.2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50%      { transform: scale(1.7); opacity: 0.28; }
+        }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
         .search-container {
-            flex: 1; background: var(--acrylic); border: 1px solid var(--border);
-            border-radius: 6px; padding: 0 15px; display: flex; align-items: center; gap: 10px;
-            backdrop-filter: blur(10px); height: 36px;
+            flex: 1;
+            background: var(--acrylic);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(14px);
+            height: 38px;
         }
-        .search-container input {
-            background: transparent; border: none; color: #fff; font-family: inherit;
-            font-size: 10px; outline: none; width: 100%; cursor: text;
-        }
-        .tool-btn {
-            background: var(--btn-idle); border: 1px solid var(--border); color: var(--dim);
-            font-size: 9px; padding: 0 15px; border-radius: 6px; font-weight: 800;
-            cursor: pointer; transition: 0.2s;
-        }
-        .tool-btn:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.08); }
 
-        /* --- GRID --- */
-        .scroll-container { height: calc(100vh - 150px); overflow-y: auto; padding-right: 10px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 18px; }
+        .search-container input {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 10.5px;
+            outline: none;
+            width: 100%;
+        }
+
+        .tool-btn {
+            background: rgba(255,255,255,0.035);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            font-size: 9px;
+            padding: 0 16px;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .tool-btn:hover {
+            border-color: color-mix(in srgb, var(--accent) 60%, white 40%);
+            color: white;
+            background: rgba(255,255,255,0.07);
+            box-shadow: 0 0 14px var(--accent-glow);
+        }
+
+        .scroll-container {
+            height: calc(100vh - 150px);
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 18px;
+        }
 
         .card {
-            background: var(--acrylic); border: 1px solid var(--border);
-            border-radius: var(--radius-sm); overflow: hidden; transition: var(--transition);
-            cursor: pointer; position: relative; backdrop-filter: blur(10px);
+            background: var(--acrylic);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            backdrop-filter: blur(12px);
+            cursor: pointer;
+            position: relative;
         }
-        .card:hover { border-color: rgba(255,255,255,0.3); transform: translateY(-3px); }
-        .card-img { width: 100%; height: 115px; object-fit: cover; opacity: 0.35; filter: grayscale(1); transition: 0.5s; }
-        .card:hover .card-img { opacity: 0.8; filter: grayscale(0); }
-        
+
+        .card:hover {
+            border-color: color-mix(in srgb, var(--accent) 55%, white 45%);
+            transform: translateY(-5px) scale(1.018);
+            box-shadow: 0 12px 40px var(--accent-glow);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 115px;
+            object-fit: cover;
+            opacity: 0.38;
+            filter: grayscale(0.9);
+            transition: opacity 0.65s ease, filter 0.65s ease, transform 0.7s ease;
+        }
+
+        .card:hover .card-img {
+            opacity: 0.82;
+            filter: grayscale(0.15);
+            transform: scale(1.04);
+        }
+
         .badge {
-            position: absolute; top: 10px; right: 10px; font-size: 7px; font-weight: 800;
-            padding: 3px 7px; border-radius: 3px; text-transform: uppercase;
-            background: rgba(0,0,0,0.6); border: 1px solid var(--border);
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 7.5px;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            background: rgba(0,0,0,0.65);
+            border: 1px solid var(--border);
         }
-        .badge-premium { color: #fff; border-color: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.2); }
 
-        .card-content { padding: 12px; }
-        .card-title { font-size: 11px; font-weight: 500; margin-bottom: 4px; color: #fff; }
-        .card-meta { font-size: 8px; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+        .badge-premium {
+            color: white;
+            border-color: var(--accent);
+            background: color-mix(in srgb, var(--accent) 75%, black 25%);
+            box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 60%, transparent);
+        }
 
-        /* --- CENTERED ACRYLIC MODAL --- */
+        .card-content {
+            padding: 12px;
+        }
+
+        .card-title {
+            font-size: 11.2px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: var(--text);
+        }
+
+        .card-meta {
+            font-size: 8.2px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-            backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; z-index: 2000;
-            opacity: 0; transition: 0.3s ease;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.68);
+            backdrop-filter: blur(18px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.55s ease, backdrop-filter 0.8s ease;
         }
-        .modal-overlay.active { display: flex; opacity: 1; }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
 
         .modal-content {
-            background: rgba(10, 10, 10, 0.85);
-            backdrop-filter: blur(40px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            width: 360px; padding: 40px; border-radius: 20px;
-            text-align: center; transform: scale(0.9); transition: 0.4s var(--transition);
+            background: var(--surface);
+            backdrop-filter: blur(36px) saturate(170%);
+            border: 1px solid color-mix(in srgb, var(--accent) 35%, white 65%);
+            width: 360px;
+            padding: 40px;
+            border-radius: 22px;
+            text-align: center;
+            transform: scale(0.88);
+            box-shadow: 0 24px 70px rgba(0,0,0,0.65);
+            transition: all 0.55s cubic-bezier(0.23, 1, 0.32, 1);
         }
-        .modal-overlay.active .modal-content { transform: scale(1); }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
 
         .modal-dot {
-            width: 45px; height: 45px; background: #fff; border-radius: 50%;
-            margin: 0 auto 30px; box-shadow: 0 0 40px rgba(255,255,255,0.5);
-            animation: pulse 1.5s infinite;
+            width: 48px;
+            height: 48px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin: 0 auto 32px;
+            box-shadow: 0 0 48px var(--accent-glow);
+            animation: pulse 1.8s infinite;
         }
 
-        /* --- LESS WHITE BUTTONS --- */
         .action-btn {
-            width: 100%; padding: 13px; margin-bottom: 10px;
-            background: var(--btn-idle); border: 1px solid var(--border);
-            color: rgba(255,255,255,0.7); font-family: inherit; font-size: 9px; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 2px; cursor: pointer; border-radius: 6px;
-            transition: 0.3s;
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid var(--border);
+            color: rgba(255,255,255,0.75);
+            font-family: inherit;
+            font-size: 9.2px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            border-radius: 8px;
         }
-        .action-btn:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.5); }
-        .action-btn.primary { 
-            background: rgba(255,255,255,0.9); color: #000; border: none; 
-        }
-        .action-btn.primary:hover { background: #fff; transform: scale(1.02); }
 
-        /* --- MONACO TOASTS --- */
-        .toast-container { position: fixed; bottom: 30px; right: 30px; display: flex; flex-direction: column-reverse; gap: 8px; z-index: 3000; }
-        .toast {
-            padding: 10px 18px; background: #080808; border: 1px solid var(--border);
-            border-left: 2px solid #fff; font-size: 10px; color: #fff;
-            transform: translateX(130%); transition: 0.4s;
+        .action-btn:hover {
+            background: rgba(255,255,255,0.09);
+            color: white;
+            border-color: color-mix(in srgb, var(--accent) 60%, white 40%);
         }
-        .toast.show { transform: translateX(0); }
+
+        .action-btn.primary {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .action-btn.primary:hover {
+            background: color-mix(in srgb, var(--accent) 85%, white 15%);
+            transform: scale(1.025);
+            box-shadow: 0 8px 32px var(--accent-glow);
+        }
+
+        .toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 8px;
+            z-index: 3000;
+        }
+
+        .toast {
+            padding: 10px 18px;
+            background: rgba(8,8,8,0.92);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--accent);
+            font-size: 10px;
+            color: white;
+            transform: translateX(140%);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.5);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        /* Theme crossfade layer */
+        .theme-transition-layer {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.9s ease;
+        }
+
+        .theme-transition-layer.active {
+            opacity: 0.18;
+        }
     </style>
 </head>
 <body>
@@ -143,12 +347,12 @@
 
     <div class="header">
         <div class="logo"><div class="dot"></div> PROVOID LIGHTNING</div>
-        <div style="font-size: 8px; color: var(--dim); letter-spacing: 1px;">ELITE BUILD</div>
+        <div style="font-size: 8px; color: var(--text-dim); letter-spacing: 1px;">ELITE BUILD</div>
     </div>
 
     <div class="toolbar">
         <div class="search-container">
-            <i class="fas fa-search" style="font-size: 9px; color: var(--dim);"></i>
+            <i class="fas fa-search" style="font-size: 9px; color: var(--text-dim);"></i>
             <input type="text" id="sIn" placeholder="IDENTIFY SCRIPT..." onkeyup="if(event.key==='Enter') search()">
         </div>
         <button class="tool-btn" onclick="search()">LATEST</button>
@@ -162,14 +366,14 @@
     <div class="modal-overlay" id="mOver" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-dot"></div>
-            <div id="mGame" style="font-size: 8px; color: var(--dim); letter-spacing: 2px; margin-bottom: 8px;">DETECTION: NULL</div>
-            <div id="mTitle" style="font-size: 14px; font-weight: 800; margin-bottom: 35px; color: #fff;">LOADING...</div>
+            <div id="mGame" style="font-size: 8px; color: var(--text-dim); letter-spacing: 2px; margin-bottom: 8px;">DETECTION: NULL</div>
+            <div id="mTitle" style="font-size: 14px; font-weight: 800; margin-bottom: 35px; color: var(--text);">LOADING...</div>
             
             <button class="action-btn primary" onclick="execute()">EXECUTE MODULE</button>
             <button class="action-btn" onclick="save()">SAVE TO VAULT</button>
             <button class="action-btn" onclick="copy()">COPY SOURCE</button>
             
-            <button class="action-btn" onclick="closeModal()" style="border:none; opacity: 0.3; margin-top: 15px; font-size: 7px; background: transparent;">DISMISS</button>
+            <button class="action-btn" onclick="closeModal()" style="border:none; opacity: 0.35; margin-top: 15px; font-size: 7px; background: transparent;">DISMISS</button>
         </div>
     </div>
 
@@ -181,32 +385,69 @@
         function notify(msg) {
             const b = document.getElementById('toastBox');
             const t = document.createElement('div');
-            t.className = 'toast'; t.innerText = msg.toUpperCase();
+            t.className = 'toast';
+            t.innerText = msg.toUpperCase();
             b.appendChild(t);
             setTimeout(() => t.classList.add('show'), 10);
-            setTimeout(() => { t.classList.remove('show'); setTimeout(()=>t.remove(), 500); }, 3000);
+            setTimeout(() => {
+                t.classList.remove('show');
+                setTimeout(() => t.remove(), 600);
+            }, 3200);
         }
 
-        // --- SPACE BACKGROUND ---
+        // Stars background
         const cvs = document.getElementById('stars');
         const ctx = cvs.getContext('2d');
         let stars = [];
-        function init() {
-            cvs.width = window.innerWidth; cvs.height = window.innerHeight;
-            stars = []; for(let i=0; i<100; i++) stars.push({x:Math.random()*cvs.width, y:Math.random()*cvs.height, r:Math.random()*1, s:Math.random()*0.3});
+        function initStars() {
+            cvs.width = window.innerWidth;
+            cvs.height = window.innerHeight;
+            stars = [];
+            for(let i = 0; i < 100; i++) {
+                stars.push({
+                    x: Math.random() * cvs.width,
+                    y: Math.random() * cvs.height,
+                    r: Math.random() * 1.2,
+                    s: Math.random() * 0.35 + 0.1
+                });
+            }
         }
-        function draw() {
-            ctx.clearRect(0,0,cvs.width, cvs.height);
+        function drawStars() {
+            ctx.clearRect(0,0,cvs.width,cvs.height);
             ctx.fillStyle = "#fff";
             stars.forEach(s => {
-                ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI*2); ctx.fill();
-                s.y += s.s; if(s.y > cvs.height) s.y = 0;
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+                ctx.fill();
+                s.y += s.s;
+                if(s.y > cvs.height) s.y = 0;
             });
-            requestAnimationFrame(draw);
+            requestAnimationFrame(drawStars);
         }
-        init(); draw();
+        initStars();
+        drawStars();
 
-        // --- API LOGIC ---
+        // Theme change with nice crossfade
+        function setTheme(accentHex) {
+            document.documentElement.style.setProperty('--accent', accentHex);
+            document.documentElement.style.setProperty('--accent-glow', 
+                `rgba(${parseInt(accentHex.slice(1,3),16)},${parseInt(accentHex.slice(3,5),16)},${parseInt(accentHex.slice(5,7),16)},0.28)`);
+
+            // Crossfade effect
+            const layer = document.createElement('div');
+            layer.className = 'theme-transition-layer';
+            document.body.appendChild(layer);
+            layer.classList.add('active');
+            setTimeout(() => {
+                layer.classList.remove('active');
+                setTimeout(() => layer.remove(), 1000);
+            }, 120);
+        }
+
+        // ────────────────────────────────────────────────
+        //  Your existing script logic below (unchanged)
+        // ────────────────────────────────────────────────
+
         async function search() {
             const query = document.getElementById('sIn').value;
             notify(query ? `Searching Cloud...` : "Updating Database");
@@ -248,47 +489,44 @@
         function closeModal() {
             const ov = document.getElementById('mOver');
             ov.classList.remove('active');
-            setTimeout(() => ov.style.display = 'none', 300);
+            setTimeout(() => ov.style.display = 'none', 350);
         }
 
         function execute() {
-    if (activeScript && activeScript.raw) {
-        if (window.chrome && window.chrome.webview) {
-            // Sends the 'EXECUTE' action to C#
-            window.chrome.webview.postMessage({
-                action: "EXECUTE",
-                content: activeScript.raw
-            });
-            notify("Module Dispatched");
-        } else {
-            copy(); // Fallback for browser testing
-            notify("Executed (Clipboard Fallback)");
+            if (activeScript && activeScript.raw) {
+                if (window.chrome && window.chrome.webview) {
+                    window.chrome.webview.postMessage({
+                        action: "EXECUTE",
+                        content: activeScript.raw
+                    });
+                    notify("Module Dispatched");
+                } else {
+                    copy();
+                    notify("Executed (Clipboard Fallback)");
+                }
+                closeModal();
+            } else {
+                notify("Script not loaded yet");
+            }
         }
-        closeModal();
-    } else {
-        notify("Script not loaded yet");
-    }
-}
 
-function copy() {
-    if (activeScript && activeScript.raw) {
-        if (window.chrome && window.chrome.webview) {
-            // Sends the 'COPY' action to C#
-            window.chrome.webview.postMessage({
-                action: "COPY", 
-                content: activeScript.raw
-            });
-            notify("Source Sent to Clipboard");
-        } else {
-            // Web browser fallback
-            navigator.clipboard.writeText(activeScript.raw);
-            notify("Source Copied (Web)");
+        function copy() {
+            if (activeScript && activeScript.raw) {
+                if (window.chrome && window.chrome.webview) {
+                    window.chrome.webview.postMessage({
+                        action: "COPY", 
+                        content: activeScript.raw
+                    });
+                    notify("Source Sent to Clipboard");
+                } else {
+                    navigator.clipboard.writeText(activeScript.raw);
+                    notify("Source Copied (Web)");
+                }
+                closeModal();
+            } else {
+                notify("Script source missing");
+            }
         }
-        closeModal();
-    } else {
-        notify("Script source missing");
-    }
-}
 
         function save() {
             if(!saved.find(x => x._id === activeScript._id)) {
